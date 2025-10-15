@@ -65,11 +65,6 @@ namespace GameProg_SuperVirusLand_MichaelT
                 int dir = rand.Next(0, 4);
                 (int, int) movement = (0, 0);
 
-                //Debug.WriteLine($"Virus {i} sees {map[viruses[i].Item1 - 1, viruses[i].Item2]} above...");
-                //Debug.WriteLine($"{map[viruses[i].Item1 + 1, viruses[i].Item2]} below...");
-                //Debug.WriteLine($"{map[viruses[i].Item1, viruses[i].Item2 + 1]} to the right...");
-                //Debug.WriteLine($"{map[viruses[i].Item1, viruses[i].Item2 - 1]} to the left...");
-
                 if (dir == 0) movement = (0, 1); // right
                 else if (dir == 1) movement = (1, 0); // down
                 else if (dir == 2) movement = (0, -1); // left
