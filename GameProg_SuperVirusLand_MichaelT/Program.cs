@@ -38,7 +38,7 @@ namespace GameProg_SuperVirusLand_MichaelT
 
         static void PrintMap() 
         {
-            Console.Clear();
+            Console.SetCursorPosition(0, 0);
 
             for (int y = 0; y < map.GetLength(0); y++) 
             {
@@ -56,7 +56,28 @@ namespace GameProg_SuperVirusLand_MichaelT
                 Console.Write("\n");
             }
 
+
+            DisplayVirusCounts();
             ShowViruses();
+        }
+
+        static void DisplayVirusCounts() 
+        {
+            int magentaViruses = viruses.Count(v => v.color == ConsoleColor.Magenta);
+            int yellowViruses = viruses.Count(v => v.color == ConsoleColor.Yellow);
+            int cyanViruses = viruses.Count(v => v.color == ConsoleColor.Cyan);
+
+            Console.ForegroundColor = ConsoleColor.Magenta;
+            Console.Write($"Magenta: {magentaViruses}");
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.Write($" | ");
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.Write($"Yellow: {yellowViruses}");
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.Write($" | ");
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.Write($"Cyan: {cyanViruses}");
+            Console.ForegroundColor = ConsoleColor.White;
         }
 
         static void ShowViruses() 
@@ -129,6 +150,8 @@ namespace GameProg_SuperVirusLand_MichaelT
 
         static void Main(string[] args)
         {
+            Console.CursorVisible = false;
+
             viruses.Add(new Virus(1, 0, ConsoleColor.Magenta));
             viruses.Add(new Virus(6, 2, ConsoleColor.Yellow));
             viruses.Add(new Virus(5, 8, ConsoleColor.Cyan));
@@ -136,7 +159,7 @@ namespace GameProg_SuperVirusLand_MichaelT
             while (true) 
             {
                 PrintMap();
-                Thread.Sleep(500);
+                Thread.Sleep(300);
                 //Console.ReadKey();
                 VirusSteps();
             }
