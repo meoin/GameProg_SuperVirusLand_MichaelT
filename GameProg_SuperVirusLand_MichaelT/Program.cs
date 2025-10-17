@@ -76,7 +76,7 @@ namespace GameProg_SuperVirusLand_MichaelT
             Console.ForegroundColor = ConsoleColor.White;
             Console.Write($" | ");
             Console.ForegroundColor = ConsoleColor.Cyan;
-            Console.Write($"Cyan: {cyanViruses}");
+            Console.Write($"Cyan: {cyanViruses}    ");
             Console.ForegroundColor = ConsoleColor.White;
         }
 
