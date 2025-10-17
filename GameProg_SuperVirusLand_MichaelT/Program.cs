@@ -7,6 +7,20 @@ using System.Threading;
 
 namespace GameProg_SuperVirusLand_MichaelT
 {
+    internal class Virus 
+    {
+        public int xPos;
+        public int yPos;
+        public ConsoleColor color;
+
+        public Virus(int y, int x, ConsoleColor col)
+        {
+            xPos = x;
+            yPos = y;
+            color = col;
+        }
+    }
+
     internal class Program
     {
         static char[,] map = {
@@ -20,7 +34,7 @@ namespace GameProg_SuperVirusLand_MichaelT
             {'-','-','-','^','^','^','^','^','^','^'}
         };
 
-        static List<(int, int)> viruses = new List<(int, int)>();
+        static List<Virus> viruses = new List<Virus>();
 
         static void PrintMap() 
         {
@@ -47,10 +61,10 @@ namespace GameProg_SuperVirusLand_MichaelT
 
         static void ShowViruses() 
         {
-            foreach ((int, int) virus in viruses) 
+            foreach (Virus virus in viruses) 
             {
-                Console.SetCursorPosition(virus.Item2, virus.Item1);
-                Console.ForegroundColor = ConsoleColor.Magenta;
+                Console.SetCursorPosition(virus.xPos, virus.yPos);
+                Console.ForegroundColor = virus.color;
                 Console.Write('%');
             }
             Console.SetCursorPosition(0, map.GetLength(0) + 1);
@@ -65,31 +79,48 @@ namespace GameProg_SuperVirusLand_MichaelT
                 int dir = rand.Next(0, 4);
                 (int, int) movement = (0, 0);
 
+                //Debug.WriteLine($"Virus {i} sees {map[viruses[i].yPos - 1, viruses[i].xPos]} above...");
+                //Debug.WriteLine($"{map[viruses[i].yPos + 1, viruses[i].xPos]} below...");
+                //Debug.WriteLine($"{map[viruses[i].yPos, viruses[i].xPos + 1]} to the right...");
+                //Debug.WriteLine($"{map[viruses[i].yPos, viruses[i].xPos - 1]} to the left...");
+
                 if (dir == 0) movement = (0, 1); // right
                 else if (dir == 1) movement = (1, 0); // down
                 else if (dir == 2) movement = (0, -1); // left
                 else if (dir == 3) movement = (-1, 0); // up
 
-                (int, int) target = (viruses[i].Item1 + movement.Item1, viruses[i].Item2 + movement.Item2);
+                int targetX = viruses[i].xPos + movement.Item2;
+                int targetY = viruses[i].yPos + movement.Item1;
                 Debug.WriteLine($"Trying to move virus {i}");
 
-                if (target.Item1 >= 0 && target.Item1 < map.GetLength(0) // vertical bounds
-                && target.Item2 >= 0 && target.Item2 < map.GetLength(1)) // horizontal bounds
+                if (targetY >= 0 && targetY < map.GetLength(0) // vertical bounds
+                && targetX >= 0 && targetX < map.GetLength(1)) // horizontal bounds
                 {
-                    if (map[target.Item1, target.Item2] == '-' && !viruses.Contains(target)) 
+                    if (map[targetY, targetX] == '-') 
                     {
-                        Debug.WriteLine($"Virus {i} looks in {dir} direction and sees {map[target.Item1, target.Item2]}");
-                        Debug.WriteLine($"Moving virus {i} to: X{target.Item2}, Y{target.Item1}");
+                        Debug.WriteLine($"Virus {i} looks in {dir} direction and sees {map[targetY, targetX]}");
+                        Debug.WriteLine($"Moving virus {i} to: X{targetX}, Y{targetY}");
 
                         int dupeRoll = rand.Next(0, 10);
-
-                        if (dupeRoll == 0)
+                        if (viruses.Any(v => v.xPos == targetX && v.yPos == targetY))
                         {
-                            viruses.Add((target.Item1, target.Item2));
+                            if (viruses.Any(v => v.xPos == targetX && v.yPos == targetY && !(v.color == viruses[i].color))) 
+                            {
+                                Virus matchingVirus = viruses.Where(v => v.xPos == targetX && v.yPos == targetY && !(v.color == viruses[i].color)).First();
+                                matchingVirus.color = viruses[i].color;
+                            }
                         }
                         else 
                         {
-                            viruses[i] = target;
+                            if (dupeRoll == 0)
+                            {
+                                viruses.Add(new Virus(targetY, targetX, viruses[i].color));
+                            }
+                            else
+                            {
+                                viruses[i].yPos = targetY;
+                                viruses[i].xPos = targetX;
+                            }
                         }
                     }
                 }
@@ -98,14 +129,15 @@ namespace GameProg_SuperVirusLand_MichaelT
 
         static void Main(string[] args)
         {
-            viruses.Add((1, 0));
-            viruses.Add((6, 2));
-            viruses.Add((5, 8));
+            viruses.Add(new Virus(1, 0, ConsoleColor.Magenta));
+            viruses.Add(new Virus(6, 2, ConsoleColor.Yellow));
+            viruses.Add(new Virus(5, 8, ConsoleColor.Cyan));
 
             while (true) 
             {
                 PrintMap();
                 Thread.Sleep(500);
+                //Console.ReadKey();
                 VirusSteps();
             }
         }
